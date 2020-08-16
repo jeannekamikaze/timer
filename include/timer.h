@@ -1,63 +1,55 @@
 #pragma once
 
-#ifndef _WIN32
-#include <time.h>
-#endif
+#include <stdint.h>
 
-namespace kx {
-
+/// A particular point in time.
 #ifdef _WIN32
-    #ifdef _MSC_VER
-        using time_point = __int64;
-    #else
-        using time_point = __UINT64_TYPE__;
-    #endif
+typedef uint64_t time_point;
 #else
-    using time_point = timespec;
+#include <time.h>
+typedef struct timespec time_point;
 #endif
 
-// to-do: consider using a new type and enforcing rules.
-// example: TimePoint - TimePoint = TimeDelta
-using time_delta = double;
+/// Time elapsed between two time points.
+typedef uint64_t time_delta;
 
 /// A high resolution timer.
-class Timer
-{
-    time_point start_time;   // The instant the timer was last started.
-    time_point last_tick;    // The instant the timer was last ticked.
-    time_delta running_time; // Time elapsed since the timer was last started.
-    time_delta delta_time;   // Time elapsed since the last tick.
+typedef struct {
+  time_point start_time;   // The instant the timer was last started.
+  time_point last_tick;    // The instant the timer was last ticked.
+  time_delta running_time; // Time elapsed since the timer was last started.
+  time_delta delta_time;   // Time elapsed since the last tick.
+} Timer;
 
-public:
+/// Construct a new timer.
+Timer timer_new(void);
 
-    /// Construct a new timer.
-    Timer ();
+/// Start the timer.
+/// This sets the time point from which time deltas are measured.
+/// Calling this multilple times resets the timer.
+void timer_start(Timer*);
 
-    /// Update the timer's running and delta times.
-    void tick ();
+/// Update the timer's running and delta times.
+void timer_tick(Timer*);
 
-    /// Start the timer.
-    /// This sets the time point from which time deltas are measured.
-    /// Calling this multilple times effectively resets the timer.
-    void start ();
-
-    /// Return the total running from the last tick to the last time the timer was started.
-    time_delta time () const { return running_time; }
-
-    /// Return the time elapsed since the last tick.
-    time_delta delta () const { return delta_time; }
-};
-
-/// Get a timestamp of the current time.
-time_point now ();
+/// Get the current time.
+time_point time_now(void);
 
 /// Return the time elapsed between two timestamps.
-time_delta time_diff (time_point start, time_point end);
+time_delta time_diff(time_point start, time_point end);
 
-/// Put the caller thread to sleep for the given number of seconds.
-void sleep (time_delta seconds);
+/// Return the time elapsed in seconds.
+double time_delta_to_sec(time_delta dt);
 
-/// Return time point 0.
-extern const time_point time_zero;
+/// Convert the time elapsed in seconds to a time delta.
+time_delta sec_to_time_delta(double seconds);
 
-} // namespace kx
+/// Put the caller thread to sleep for the given amount of time.
+void time_sleep(time_delta dt);
+
+/// The time point 0.
+#ifdef _WIN32
+static const time_point time_zero = 0;
+#else
+static const time_point time_zero = {0, 0};
+#endif
