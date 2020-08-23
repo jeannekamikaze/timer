@@ -22,7 +22,7 @@ typedef struct {
 } Timer;
 
 /// Construct a new timer.
-Timer timer_new(void);
+Timer timer_make(void);
 
 /// Start the timer.
 /// This sets the time point from which time deltas are measured.

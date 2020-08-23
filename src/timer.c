@@ -24,7 +24,7 @@ static void timer_initialise() {
 #endif
 }
 
-Timer timer_new(void) {
+Timer timer_make(void) {
   timer_initialise();
   Timer timer = {0};
   timer_start(&timer);

@@ -18,7 +18,7 @@ TEST_CASE(sleep) {
 // The timer starts as soon as it is created.
 TEST_CASE(start_on_new) {
   const time_point test_start_time = time_now();
-  Timer timer = timer_new();
+  Timer timer = timer_make();
   TEST_TRUE(time_delta_to_sec(time_diff(test_start_time, timer.start_time)) >=
             0.0);
 }
@@ -27,7 +27,7 @@ TEST_CASE(start_on_new) {
 TEST_CASE(tick_updates_last_tick_time) {
   const double sleep_time_sec = 0.1;
 
-  Timer timer = timer_new();
+  Timer timer = timer_make();
   time_sleep(sec_to_time_delta(sleep_time_sec));
   timer_tick(&timer);
 
@@ -39,7 +39,7 @@ TEST_CASE(tick_updates_last_tick_time) {
 TEST_CASE(tick_updates_delta_time) {
   const double sleep_time_sec = 0.1;
 
-  Timer timer = timer_new();
+  Timer timer = timer_make();
   time_sleep(sec_to_time_delta(sleep_time_sec));
   timer_tick(&timer);
 
@@ -48,7 +48,7 @@ TEST_CASE(tick_updates_delta_time) {
 
 // Tick leaves the timer's start time unchanged.
 TEST_CASE(tick_does_not_change_start_time) {
-  Timer timer = timer_new();
+  Timer timer = timer_make();
   const time_point start_time = timer.start_time;
   time_sleep(sec_to_time_delta(0.1));
   timer_tick(&timer);
@@ -58,7 +58,7 @@ TEST_CASE(tick_does_not_change_start_time) {
 // Start starts/restarts the timer and updates the timer's start time.
 TEST_CASE(start_restarts_start_time) {
   const double sleep_time_seconds = 0.1;
-  Timer timer = timer_new();
+  Timer timer = timer_make();
   const time_point start_time = timer.start_time;
   time_sleep(sec_to_time_delta(sleep_time_seconds));
   timer_start(&timer);
@@ -68,7 +68,7 @@ TEST_CASE(start_restarts_start_time) {
 
 // Count the number of hundred-seconds in a second.
 TEST_CASE(count) {
-  Timer timer = timer_new();
+  Timer timer = timer_make();
 
   int hundred_seconds = 0;
   const time_point start = timer.start_time;
